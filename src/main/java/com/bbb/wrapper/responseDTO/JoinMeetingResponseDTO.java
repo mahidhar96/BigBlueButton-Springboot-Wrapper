@@ -1,32 +1,66 @@
 package com.bbb.wrapper.responseDTO;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.ResponseBody;
+
+
+
+@ResponseBody
 public class JoinMeetingResponseDTO {
-	String moderatorURL;
-	String attendeeURL;
-	String unsafeURL;
+	private List<String> moderatorURLs;
+	private List<String> attendeeURLs;
+	private String genericModeratorURL;
+	private String genericAttendeeURL;
+	private String unsafeURL;
 	
 	@Override
 	public String toString() {
-		return "JoinMeetingResponseDTO [moderatorURL=" + moderatorURL + ", attendeeURL=" + attendeeURL + ", unsafeURL="
-				+ unsafeURL + "]";
+		return "JoinMeetingResponseDTO [moderatorURLs=" + moderatorURLs + ", attendeeURLs=" + attendeeURLs
+				+ ", genericModeratorURL=" + genericModeratorURL + ", genericAttendeeURL=" + genericAttendeeURL
+				+ ", unsafeURL=" + unsafeURL + "]";
 	}
-	
-	public String getModeratorURL() {
-		return moderatorURL;
+
+	public List<String> getModeratorURLs() {
+		return moderatorURLs;
 	}
-	public void setModeratorURL(String moderatorURL) {
-		this.moderatorURL = moderatorURL;
+
+	public void setModeratorURLs(List<String> moderatorURLs) {
+		this.moderatorURLs = moderatorURLs;
 	}
-	public String getAttendeeURL() {
-		return attendeeURL;
+
+	public List<String> getAttendeeURLs() {
+		return attendeeURLs;
 	}
-	public void setAttendeeURL(String attendeeURL) {
-		this.attendeeURL = attendeeURL;
+
+	public void setAttendeeURLs(List<String> attendeeURLs) {
+		this.attendeeURLs = attendeeURLs;
 	}
+
+	public String getGenericModeratorURL() {
+		return genericModeratorURL;
+	}
+
+	public void setGenericModeratorURL(String genericModeratorURL) {
+		this.genericModeratorURL = genericModeratorURL;
+	}
+
+	public String getGenericAttendeeURL() {
+		return genericAttendeeURL;
+	}
+
+	public void setGenericAttendeeURL(String genericAttendeeURL) {
+		this.genericAttendeeURL = genericAttendeeURL;
+	}
+
 	public String getUnsafeURL() {
 		return unsafeURL;
 	}
+
 	public void setUnsafeURL(String unsafeURL) {
 		this.unsafeURL = unsafeURL;
 	}
+	
+	
+
 }

@@ -9,15 +9,20 @@ import java.security.NoSuchAlgorithmException;
 public class WrapperUtils {
 	
 	public static String generateSHA1(String callName,String queryString,String sharedSecret) 
-	{ 
-		String input = callName.concat(queryString.substring(0,queryString.length()-1)).concat(sharedSecret);
+	{
+		String input;
+		if(queryString!=null && queryString.length()>0) {
+			input = callName.concat(queryString.substring(0,queryString.length()-1)).concat(sharedSecret);
+		}else {
+			input = callName.concat(sharedSecret);
+		}
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-1"); 
 			byte[] messageDigest = md.digest(input.getBytes()); 
 			BigInteger no = new BigInteger(1, messageDigest); 
 			String hashtext = no.toString(16); 
-			while (hashtext.length() < 32) { 
-				hashtext = "0" + hashtext; 
+			while (hashtext.length() < 40) { 
+				hashtext = "0".concat(hashtext); 
 			} 
 			return hashtext; 
 		} 

@@ -23,7 +23,6 @@ public class JoinMeetingRequest {
 	private String guest;
 	
 	public JoinMeetingRequest(JoinAllMeetingRequest joinAllMeetingRequest) {
-		setFullName(joinAllMeetingRequest.getFullName());
 		setMeetingID(joinAllMeetingRequest.getMeetingID());
 		setCreateTime(joinAllMeetingRequest.getCreateTime());
 		setUserID(joinAllMeetingRequest.getUserID());
