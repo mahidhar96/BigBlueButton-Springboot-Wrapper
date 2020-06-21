@@ -1,10 +1,9 @@
 package com.bbb.wrapper.utils;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.net.URLEncoder;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class WrapperUtils {
 	
@@ -16,19 +15,21 @@ public class WrapperUtils {
 		}else {
 			input = callName.concat(sharedSecret);
 		}
-		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-1"); 
-			byte[] messageDigest = md.digest(input.getBytes()); 
-			BigInteger no = new BigInteger(1, messageDigest); 
-			String hashtext = no.toString(16); 
-			while (hashtext.length() < 40) { 
-				hashtext = "0".concat(hashtext); 
-			} 
-			return hashtext; 
-		} 
-		catch (NoSuchAlgorithmException e) { 
-			throw new RuntimeException(e); 
-		} 
+		String hashtext = DigestUtils.sha1Hex(input);
+		return hashtext;
+//		try {
+//			MessageDigest md = MessageDigest.getInstance("SHA-1"); 
+//			byte[] messageDigest = md.digest(input.getBytes()); 
+//			BigInteger no = new BigInteger(1, messageDigest); 
+//			hashtext = no.toString(16); 
+//			while (hashtext.length() < 40) { 
+//				hashtext = "0".concat(hashtext); 
+//			} 
+//			return hashtext; 
+//		} 
+//		catch (NoSuchAlgorithmException e) { 
+//			throw new RuntimeException(e); 
+//		} 
 	}
 	
 	public static String joinQuery(String query, String attribute, String value) throws UnsupportedEncodingException {

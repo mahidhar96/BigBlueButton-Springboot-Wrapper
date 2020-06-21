@@ -1,5 +1,7 @@
 package com.bbb.wrapper.responseDTO;
 
+import java.util.Arrays;
+
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 
 public class MeetingInfoDTO {
@@ -28,7 +30,7 @@ public class MeetingInfoDTO {
 	private Integer moderatorCount;
 	@JacksonXmlElementWrapper(useWrapping = true)
 	private AttendeeInfoDTO[] attendees;
-	private String metadata;
+	private MetadataDTO metadata;
 	private Boolean isBreakout;
 	private String messageKey;
 	private String message;
@@ -43,8 +45,8 @@ public class MeetingInfoDTO {
 				+ hasBeenForciblyEnded + ", startTime=" + startTime + ", endTime=" + endTime + ", participantCount="
 				+ participantCount + ", listenerCount=" + listenerCount + ", voiceParticipantCount="
 				+ voiceParticipantCount + ", videoCount=" + videoCount + ", maxUsers=" + maxUsers + ", moderatorCount="
-				+ moderatorCount + ", attendees=" + attendees + ", metadata=" + metadata + ", isBreakout=" + isBreakout
-				+ ", messageKey=" + messageKey + ", message=" + message + "]";
+				+ moderatorCount + ", attendees=" + Arrays.toString(attendees) + ", metadata=" + metadata
+				+ ", isBreakout=" + isBreakout + ", messageKey=" + messageKey + ", message=" + message + "]";
 	}
 	
 	public String getReturncode() {
@@ -191,10 +193,10 @@ public class MeetingInfoDTO {
 	public void setAttendees(AttendeeInfoDTO[] attendees) {
 		this.attendees = attendees;
 	}
-	public String getMetadata() {
+	public MetadataDTO getMetadata() {
 		return metadata;
 	}
-	public void setMetadata(String metadata) {
+	public void setMetadata(MetadataDTO metadata) {
 		this.metadata = metadata;
 	}
 	public Boolean getIsBreakout() {

@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 import com.bbb.wrapper.requestDTO.CreateMeetingRequest;
 import com.bbb.wrapper.requestDTO.JoinAllMeetingRequest;
 import com.bbb.wrapper.requestDTO.JoinMeetingRequest;
+import com.bbb.wrapper.requestDTO.RecordingsActionsDTO;
 import com.bbb.wrapper.requestDTO.RecordingsRequestDTO;
 import com.bbb.wrapper.responseDTO.CheckAPIResponse;
 import com.bbb.wrapper.responseDTO.CreateMeetingResponseDTO;
@@ -16,6 +17,9 @@ import com.bbb.wrapper.responseDTO.MeetingInfoDTO;
 import com.bbb.wrapper.responseDTO.MeetingInfoListDTO;
 import com.bbb.wrapper.responseDTO.MeetingStatusDTO;
 import com.bbb.wrapper.responseDTO.RecordingListDTO;
+import com.bbb.wrapper.responseDTO.RecordingTextTracksDTO;
+import com.bbb.wrapper.responseDTO.RecordingsActionsResponseDTO;
+import com.bbb.wrapper.responseDTO.TextTrackDTO;
 import com.bbb.wrapper.utils.WrapperUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -25,11 +29,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Component
 public class BBBService {
 
 	public String bbb_server = "";
 	public String bbb_secret = "";
+	
 	
 //	public void analyze(Object obj){
 //	    ReflectionUtils.doWithFields(obj.getClass(), field -> {
@@ -206,7 +212,7 @@ public class BBBService {
 		XmlMapper xmlMapper = new XmlMapper();
 		if (response.getStatusCode() == HttpStatus.OK) {
 			meetingInfoListDTO
-				= xmlMapper.readValue(response.getBody(), MeetingInfoListDTO.class);
+				= xmlMapper.readValue(response.getBody().replaceAll("\n", ""), MeetingInfoListDTO.class);
 			return meetingInfoListDTO;
 		}else {
 			System.out.println(response.toString());
@@ -223,15 +229,121 @@ public class BBBService {
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response
 		  = restTemplate.getForEntity(bbb_server.concat(finalquery), String.class);
-		System.out.println(response.toString());
 		XmlMapper xmlMapper = new XmlMapper();
 		if (response.getStatusCode() == HttpStatus.OK) {
 			recordingListDTO
-				= xmlMapper.readValue(response.getBody(), RecordingListDTO.class);
+				= xmlMapper.readValue(response.getBody().replaceAll("\n", ""), RecordingListDTO.class);
 			return recordingListDTO;
 		}else {
 			System.out.println(response.toString());
 			return recordingListDTO;
 		}
 	}
+	
+	public RecordingsActionsResponseDTO recordingActions(RecordingsActionsDTO recordingsActionsDTO) throws Exception{
+		String callName = "";
+		if (recordingsActionsDTO.getPublish()!=null) {
+			callName = "publishRecordings";
+		}else if(recordingsActionsDTO.getDelete()!=null) {
+			callName = "deleteRecordings";
+		}else if(recordingsActionsDTO.getUpdate()!=null) {
+			callName = "updateRecordings";
+		}else {
+			throw(new Exception("Action Not Specified"));
+		}
+		String queryString = recordingsActionsDTO.toQuery();
+		String checksum = WrapperUtils.generateSHA1(callName, queryString, bbb_secret);
+		String finalquery = WrapperUtils.finalQuery(callName, queryString, checksum);
+		RecordingsActionsResponseDTO recordingsActionsResponseDTO = new RecordingsActionsResponseDTO();
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response
+		  = restTemplate.getForEntity(bbb_server.concat(finalquery), String.class);
+		XmlMapper xmlMapper = new XmlMapper();
+		if (response.getStatusCode() == HttpStatus.OK) {
+			recordingsActionsResponseDTO
+				= xmlMapper.readValue(response.getBody().replaceAll("\n", ""), RecordingsActionsResponseDTO.class);
+			return recordingsActionsResponseDTO;
+		}else {
+			System.out.println(response.toString());
+			return recordingsActionsResponseDTO;
+		}
+	}
+	
+	public String getDefaultConfigXML() throws JsonMappingException, JsonProcessingException {
+		String callName = "getDefaultConfigXML";
+		String checksum = WrapperUtils.generateSHA1(callName, "", bbb_secret);
+		String finalquery = WrapperUtils.finalQuery(callName, "", checksum);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response
+		  = restTemplate.getForEntity(bbb_server.concat(finalquery), String.class);
+		XmlMapper xmlMapper = new XmlMapper();
+		if (response.getStatusCode() == HttpStatus.OK) {
+			CheckAPIResponse checkAPIResponse
+				= xmlMapper.readValue(response.getBody(), CheckAPIResponse.class);
+			xmlMapper.readValue(response.getBody(), CheckAPIResponse.class);
+			return checkAPIResponse.toString();
+		}else {
+			return response.toString();
+		}	
+	}
+	
+	public String setConfigXML() throws JsonMappingException, JsonProcessingException {
+		//TODO: implement set Config
+		String callName = "setConfigXML";
+		String checksum = WrapperUtils.generateSHA1(callName, "", bbb_secret);
+		String finalquery = WrapperUtils.finalQuery(callName, "", checksum);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response
+		  = restTemplate.getForEntity(bbb_server.concat(finalquery), String.class);
+		XmlMapper xmlMapper = new XmlMapper();
+		if (response.getStatusCode() == HttpStatus.OK) {
+			CheckAPIResponse checkAPIResponse
+				= xmlMapper.readValue(response.getBody(), CheckAPIResponse.class);
+			xmlMapper.readValue(response.getBody(), CheckAPIResponse.class);
+			return checkAPIResponse.toString();
+		}else {
+			return response.toString();
+		}	
+	}
+	
+	public RecordingTextTracksDTO getRecordingTextTracks(String recordID) throws UnsupportedEncodingException, JsonMappingException, JsonProcessingException {
+		String callName = "getRecordingTextTracks";
+		String queryString = WrapperUtils.joinQuery("", "recordID", recordID);
+		String checksum = WrapperUtils.generateSHA1(callName, queryString, bbb_secret);
+		String finalquery = WrapperUtils.finalQuery(callName, queryString, checksum);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response
+		  = restTemplate.getForEntity(bbb_server.concat(finalquery), String.class);
+		XmlMapper xmlMapper = new XmlMapper();
+		RecordingTextTracksDTO recordingTextTracksDTO = new RecordingTextTracksDTO();
+		if (response.getStatusCode() == HttpStatus.OK) {
+			recordingTextTracksDTO
+				= xmlMapper.readValue(response.getBody(), RecordingTextTracksDTO.class);
+			xmlMapper.readValue(response.getBody(), RecordingTextTracksDTO.class);
+			return recordingTextTracksDTO;
+		}else {
+			return recordingTextTracksDTO;
+		}
+	}
+	
+	public RecordingTextTracksDTO putRecordingTextTrack(TextTrackDTO textTrackDTO) throws UnsupportedEncodingException, JsonMappingException, JsonProcessingException {
+		//TODO: Finish and Test Text Tracks
+		String callName = "putRecordingTextTrack";
+		String checksum = WrapperUtils.generateSHA1(callName, "", bbb_secret);
+		String finalquery = WrapperUtils.finalQuery(callName, "", checksum);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response
+		  = restTemplate.getForEntity(bbb_server.concat(finalquery), String.class);
+		XmlMapper xmlMapper = new XmlMapper();
+		RecordingTextTracksDTO recordingTextTracksDTO = new RecordingTextTracksDTO();
+		if (response.getStatusCode() == HttpStatus.OK) {
+			recordingTextTracksDTO
+				= xmlMapper.readValue(response.getBody(), RecordingTextTracksDTO.class);
+			xmlMapper.readValue(response.getBody(), RecordingTextTracksDTO.class);
+			return recordingTextTracksDTO;
+		}else {
+			return recordingTextTracksDTO;
+		}
+	}
 }
+

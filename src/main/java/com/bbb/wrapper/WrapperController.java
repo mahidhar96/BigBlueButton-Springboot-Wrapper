@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bbb.wrapper.requestDTO.CreateMeetingRequest;
 import com.bbb.wrapper.requestDTO.JoinAllMeetingRequest;
 import com.bbb.wrapper.requestDTO.JoinMeetingRequest;
+import com.bbb.wrapper.requestDTO.RecordingsActionsDTO;
 import com.bbb.wrapper.requestDTO.RecordingsRequestDTO;
 import com.bbb.wrapper.responseDTO.CreateMeetingResponseDTO;
 import com.bbb.wrapper.responseDTO.JoinMeetingResponseDTO;
@@ -12,6 +13,9 @@ import com.bbb.wrapper.responseDTO.MeetingInfoDTO;
 import com.bbb.wrapper.responseDTO.MeetingInfoListDTO;
 import com.bbb.wrapper.responseDTO.MeetingStatusDTO;
 import com.bbb.wrapper.responseDTO.RecordingListDTO;
+import com.bbb.wrapper.responseDTO.RecordingTextTracksDTO;
+import com.bbb.wrapper.responseDTO.RecordingsActionsResponseDTO;
+import com.bbb.wrapper.responseDTO.TextTrackDTO;
 import com.bbb.wrapper.services.BBBService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -93,4 +97,37 @@ public class WrapperController {
 		RecordingListDTO response = bbbService.getRecordings(recordingsRequestDTO);
 		return response;
 	}
+	
+	@RequestMapping(value="/recordingActions",method=RequestMethod.POST)
+	public RecordingsActionsResponseDTO recordingActions(@RequestBody RecordingsActionsDTO recordingsActionsDTO) throws Exception {
+		RecordingsActionsResponseDTO response = bbbService.recordingActions(recordingsActionsDTO);
+		return response;
+	}
+	
+	@RequestMapping(value="/getDefaultConfigXML",method=RequestMethod.GET)
+	public String getDefaultConfigXML() throws Exception {
+		String response = bbbService.getDefaultConfigXML();
+		return response;
+	}
+	
+	@RequestMapping(value="/setDefaultConfigXML",method=RequestMethod.POST)
+	public String setConfigXML() throws Exception {
+		//TODO: implement config files
+		String response = bbbService.getDefaultConfigXML();
+		return response;
+	}
+	
+	@RequestMapping(value="/getRecordingTextTracks",method=RequestMethod.GET)
+	public RecordingTextTracksDTO getRecordingTextTracks(@RequestParam String recordID) throws Exception {
+		RecordingTextTracksDTO response = bbbService.getRecordingTextTracks(recordID);
+		return response;
+	}
+	
+	@RequestMapping(value="/putRecordingTextTrack",method=RequestMethod.POST)
+	public RecordingTextTracksDTO putRecordingTextTrack(@RequestBody TextTrackDTO textTrackDTO) throws JsonMappingException, UnsupportedEncodingException, JsonProcessingException{
+		//TODO: Finish and Test Text Tracks
+		RecordingTextTracksDTO response = bbbService.putRecordingTextTrack(textTrackDTO);
+		return response;
+	}
+	
 }
